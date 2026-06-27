@@ -1,0 +1,182 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div style="background:var(--surface);border-bottom:1px solid var(--border);padding:2rem 0;">
+  <div class="container">
+    <div class="section-label">Free listing</div>
+    <h1 class="section-title" style="margin-bottom:0.25rem;">List your property</h1>
+    <p style="color:var(--text-muted);font-size:0.9rem;">Fill in the details below. Our team reviews all submissions before publishing.</p>
+  </div>
+</div>
+
+<section class="section-sm">
+  <div class="container" style="max-width:860px;">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <!-- Basic Info -->
+      <div class="form-section">
+        <div class="form-section-title">Basic information</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="form-field">
+            <label>Property name</label>
+            {{ form.title }}
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Property type</label>
+              {{ form.property_type }}
+            </div>
+            <div class="form-field">
+              <label>Availability status</label>
+              {{ form.status }}
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Description</label>
+            {{ form.description }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="form-section">
+        <div class="form-section-title">Location</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="form-field">
+            <label>Street address</label>
+            {{ form.address }}
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>City</label>
+              {{ form.city }}
+            </div>
+            <div class="form-field">
+              <label>State / Province</label>
+              {{ form.state_province }}
+            </div>
+          </div>
+          <div class="form-field" style="max-width:300px;">
+            <label>Country</label>
+            {{ form.country }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <div class="form-section">
+        <div class="form-section-title">Property details</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Total units</label>
+              {{ form.total_units }}
+            </div>
+            <div class="form-field">
+              <label>Available units</label>
+              {{ form.available_units }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Floor area (sqm)</label>
+              {{ form.floor_area_sqm }}
+            </div>
+            <div class="form-field">
+              <label>Number of floors</label>
+              {{ form.floors }}
+            </div>
+          </div>
+          <div class="form-field" style="max-width:220px;">
+            <label>Year built</label>
+            {{ form.year_built }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="form-section">
+        <div class="form-section-title">Pricing</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="toggle-row">
+            <span class="toggle-label">Available for rent</span>
+            {{ form.is_for_rent }}
+          </div>
+          <div class="form-field">
+            <label>Monthly rent (₱)</label>
+            {{ form.price_per_month }}
+          </div>
+          <div class="toggle-row">
+            <span class="toggle-label">Available for sale</span>
+            {{ form.is_for_sale }}
+          </div>
+          <div class="form-field">
+            <label>Sale price (₱)</label>
+            {{ form.price_for_sale }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Amenities -->
+      <div class="form-section">
+        <div class="form-section-title">Amenities</div>
+        <div class="form-field">
+          <label>Add amenities (press Enter or comma to add)</label>
+          <input type="text" id="amenities-input" class="form-control" placeholder="e.g. Parking, Pool, Gym, 24/7 Security">
+          <input type="hidden" name="amenities" id="id_amenities_hidden">
+          <div class="tag-list" id="amenities-display" style="margin-top:0.75rem;"></div>
+        </div>
+      </div>
+
+      <!-- Photos -->
+      <div class="form-section">
+        <div class="form-section-title">Photos</div>
+        <div class="upload-zone" onclick="document.getElementById('id_images').click();">
+          <div class="upload-zone-title">Upload property photos</div>
+          <div class="upload-zone-body">Click to select images. First image will be the cover photo.</div>
+          <input type="file" id="id_images" name="images" multiple accept="image/*" style="display:none;">
+        </div>
+        <div id="image-preview-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0.75rem;margin-top:1rem;"></div>
+      </div>
+
+      <!-- Contact -->
+      <div class="form-section">
+        <div class="form-section-title">Contact information</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="form-field">
+            <label>Contact name</label>
+            {{ form.contact_name }}
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Phone</label>
+              {{ form.contact_phone }}
+            </div>
+            <div class="form-field">
+              <label>Email</label>
+              {{ form.contact_email }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notice -->
+      <div style="background:var(--green-50);border:1px solid var(--green-200);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;">
+        <p style="font-size:0.88rem;color:var(--green-700);margin:0;">
+          By submitting this listing, you agree to allow Ultrafy Fiber Network to market your property online.
+          You may be contacted about a fiber internet partnership for your building.
+        </p>
+      </div>
+
+      <div style="display:flex;gap:0.85rem;justify-content:flex-end;">
+        <a href="{% url 'my_properties' %}" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary btn-lg">Submit listing</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

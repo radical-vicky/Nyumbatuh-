@@ -1,0 +1,114 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div style="background:var(--surface);border-bottom:1px solid var(--border);padding:2rem 0;">
+  <div class="container">
+    <div class="section-label">Find your space</div>
+    <h1 class="section-title" style="margin-bottom:0.25rem;">Browse properties</h1>
+    <p class="text-muted text-sm">{{ page_obj.paginator.count }} listing{{ page_obj.paginator.count|pluralize }} available</p>
+  </div>
+</div>
+
+<section class="section-sm">
+  <div class="container">
+
+    <!-- Filter Bar -->
+    <form method="get" id="filter-form">
+      <div class="filter-bar">
+        <div class="filter-group" style="flex:2;min-width:200px;">
+          <label class="filter-label">Search</label>
+          <input type="text" name="q" value="{{ q }}" placeholder="City, building name...">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Type</label>
+          <select name="type">
+            <option value="">All types</option>
+            <option value="apartment" {% if ptype == 'apartment' %}selected{% endif %}>Apartment</option>
+            <option value="office" {% if ptype == 'office' %}selected{% endif %}>Office</option>
+            <option value="commercial" {% if ptype == 'commercial' %}selected{% endif %}>Commercial</option>
+            <option value="condo" {% if ptype == 'condo' %}selected{% endif %}>Condo</option>
+            <option value="building" {% if ptype == 'building' %}selected{% endif %}>Entire Building</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Listing</label>
+          <select name="listing">
+            <option value="">Rent or Buy</option>
+            <option value="rent" {% if listing == 'rent' %}selected{% endif %}>For Rent</option>
+            <option value="sale" {% if listing == 'sale' %}selected{% endif %}>For Sale</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">City</label>
+          <select name="city">
+            <option value="">All cities</option>
+            {% for c in cities %}
+            <option value="{{ c }}" {% if city == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="filter-group" style="min-width:auto;">
+          <label class="filter-label">Ultrafy</label>
+          <select name="partner">
+            <option value="">All</option>
+            <option value="1" {% if partner == '1' %}selected{% endif %}>Partners only</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-primary" style="flex-shrink:0;align-self:flex-end;">Filter</button>
+        {% if q or ptype or listing or city or partner %}
+        <a href="{% url 'property_list' %}" class="btn-ghost" style="align-self:flex-end;">Clear</a>
+        {% endif %}
+      </div>
+    </form>
+
+    <!-- Results -->
+    {% if page_obj.object_list %}
+      <div class="property-grid">
+        {% for prop in page_obj %}
+        {% include "properties/partials/property_card.html" with property=prop %}
+        {% endfor %}
+      </div>
+
+      <!-- Pagination -->
+      {% if page_obj.has_other_pages %}
+      <nav class="pagination">
+        {% if page_obj.has_previous %}
+          <span class="page-item">
+            <a class="page-link" href="?{% if q %}q={{ q }}&{% endif %}{% if ptype %}type={{ ptype }}&{% endif %}{% if listing %}listing={{ listing }}&{% endif %}{% if city %}city={{ city }}&{% endif %}{% if partner %}partner={{ partner }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>
+          </span>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <span class="page-item active"><span class="page-link">{{ num }}</span></span>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <span class="page-item">
+              <a class="page-link" href="?{% if q %}q={{ q }}&{% endif %}{% if ptype %}type={{ ptype }}&{% endif %}{% if listing %}listing={{ listing }}&{% endif %}{% if city %}city={{ city }}&{% endif %}{% if partner %}partner={{ partner }}&{% endif %}page={{ num }}">{{ num }}</a>
+            </span>
+          {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+          <span class="page-item">
+            <a class="page-link" href="?{% if q %}q={{ q }}&{% endif %}{% if ptype %}type={{ ptype }}&{% endif %}{% if listing %}listing={{ listing }}&{% endif %}{% if city %}city={{ city }}&{% endif %}{% if partner %}partner={{ partner }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
+          </span>
+        {% endif %}
+      </nav>
+      {% endif %}
+
+    {% else %}
+      <div style="text-align:center;padding:5rem 0;">
+        <div style="font-size:2rem;margin-bottom:1rem;color:var(--green-200);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto;">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </div>
+        <h3 style="font-size:1.15rem;margin-bottom:0.5rem;">No properties found</h3>
+        <p class="text-muted text-sm">Try adjusting your filters or <a href="{% url 'property_list' %}">clear all</a> to see everything.</p>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

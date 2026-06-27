@@ -1,0 +1,94 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Partnership Status — Ultrafy Fiber{% endblock %}
+
+{% block content %}
+
+<div style="background:var(--surface);border-bottom:1px solid var(--border);padding:2rem 0;">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div class="section-label">Track your applications</div>
+        <h1 class="section-title" style="margin-bottom:0;">Partnership status</h1>
+      </div>
+      <a href="{% url 'partnership_apply' %}" class="btn-primary">New application</a>
+    </div>
+  </div>
+</div>
+
+<section class="section-sm">
+  <div class="container">
+    {% if requests %}
+    <div style="display:flex;flex-direction:column;gap:1.25rem;">
+      {% for req in requests %}
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem 2rem;box-shadow:var(--shadow-sm);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+          <div style="flex:1;">
+            <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.35rem;">
+              Submitted {{ req.created_at|date:"F d, Y" }}
+            </div>
+            <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:0.25rem;">{{ req.property_name }}</h3>
+            <p style="font-size:0.88rem;color:var(--text-secondary);">
+              {{ req.property_address }}, {{ req.city }}
+            </p>
+            <div style="display:flex;gap:1.5rem;margin-top:0.75rem;flex-wrap:wrap;">
+              <div>
+                <span style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Units</span>
+                <div style="font-size:0.92rem;font-weight:700;margin-top:0.1rem;">{{ req.unit_count }}</div>
+              </div>
+              <div>
+                <span style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Contact</span>
+                <div style="font-size:0.92rem;font-weight:700;margin-top:0.1rem;">{{ req.contact_name }}</div>
+              </div>
+              <div>
+                <span style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);">Last updated</span>
+                <div style="font-size:0.92rem;font-weight:700;margin-top:0.1rem;">{{ req.updated_at|date:"M d, Y" }}</div>
+              </div>
+            </div>
+            {% if req.notes %}
+            <div style="margin-top:0.85rem;padding:0.75rem 1rem;background:var(--surface-soft);border-radius:var(--radius-sm);">
+              <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.25rem;">Your notes</div>
+              <p style="font-size:0.85rem;color:var(--text-secondary);margin:0;line-height:1.6;">{{ req.notes }}</p>
+            </div>
+            {% endif %}
+          </div>
+          <div style="text-align:right;">
+            <span class="badge status-{{ req.status }}" style="font-size:0.78rem;padding:0.4rem 0.85rem;">
+              {{ req.get_status_display }}
+            </span>
+            <!-- Status timeline -->
+            <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:0.4rem;align-items:flex-end;">
+              {% for s, label in req.STATUS_CHOICES %}
+              <div style="display:flex;align-items:center;gap:0.5rem;">
+                <span style="font-size:0.72rem;color:{% if req.status == s %}var(--green-600){% else %}var(--text-muted){% endif %};font-weight:{% if req.status == s %}700{% else %}400{% endif %};">
+                  {{ label }}
+                </span>
+                <div style="width:10px;height:10px;border-radius:50%;background:{% if req.status == s %}var(--green-500){% else %}var(--border){% endif %};flex-shrink:0;"></div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div style="text-align:center;padding:5rem 0;">
+      <div style="width:64px;height:64px;background:var(--green-50);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;border:1.5px solid var(--green-200);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green-400)" stroke-width="1.5">
+          <path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <h3 style="font-size:1.15rem;margin-bottom:0.5rem;">No applications yet</h3>
+      <p class="text-muted text-sm" style="margin-bottom:1.5rem;">
+        Apply for a partnership to list your building and get fiber internet for your tenants.
+      </p>
+      <a href="{% url 'partnership_apply' %}" class="btn-primary">Apply now</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

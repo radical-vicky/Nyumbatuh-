@@ -1,0 +1,78 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Edit Profile — Ultrafy Fiber{% endblock %}
+
+{% block content %}
+
+<div style="background:var(--surface);border-bottom:1px solid var(--border);padding:2rem 0;">
+  <div class="container">
+    <div class="section-label">Account settings</div>
+    <h1 class="section-title" style="margin-bottom:0;">Edit profile</h1>
+  </div>
+</div>
+
+<section class="section-sm">
+  <div class="container" style="max-width:680px;">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <!-- Avatar -->
+      <div class="form-section">
+        <div class="form-section-title">Profile photo</div>
+        {% if form.instance.avatar %}
+        <div style="margin-bottom:1rem;">
+          <img src="{{ form.instance.avatar.url }}" alt="Avatar"
+               style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--green-200);">
+        </div>
+        {% endif %}
+        <div class="form-field">
+          <label style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);">
+            Upload new photo
+          </label>
+          {{ form.avatar }}
+        </div>
+      </div>
+
+      <!-- Identity -->
+      <div class="form-section">
+        <div class="form-section-title">Your identity</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <!-- Name fields from Django User (read-only display) -->
+          <div style="background:var(--surface-soft);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.95rem;">
+            <div style="font-size:0.72rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.1rem;">Email (from sign-in)</div>
+            <div style="font-size:0.92rem;color:var(--text-primary);">{{ user.email }}</div>
+          </div>
+          <div class="form-field">
+            <label>Your role</label>
+            {{ form.role }}
+            <span style="font-size:0.75rem;color:var(--text-muted);">
+              Select the role that best describes how you use Ultrafy.
+            </span>
+          </div>
+          <div class="form-field">
+            <label>Phone number</label>
+            {{ form.phone }}
+          </div>
+          <div class="form-field">
+            <label>Company or organisation (optional)</label>
+            {{ form.company_name }}
+          </div>
+        </div>
+      </div>
+
+      {% if form.errors %}
+      <div class="uf-alert uf-alert-error">
+        Please correct the errors below.
+      </div>
+      {% endif %}
+
+      <div style="display:flex;gap:0.85rem;justify-content:flex-end;">
+        <a href="{% url 'profile_dashboard' %}" class="btn-ghost">Cancel</a>
+        <button type="submit" class="btn-primary">Save changes</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

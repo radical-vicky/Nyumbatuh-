@@ -1,0 +1,138 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Apply for Partnership — Ultrafy Fiber{% endblock %}
+
+{% block content %}
+
+<div style="background:var(--surface);border-bottom:1px solid var(--border);padding:2rem 0;">
+  <div class="container">
+    <div class="section-label">For property owners</div>
+    <h1 class="section-title" style="margin-bottom:0.25rem;">Apply for partnership</h1>
+    <p style="color:var(--text-muted);font-size:0.9rem;">
+      Tell us about your building. We'll review and respond within 2 business days.
+    </p>
+  </div>
+</div>
+
+<section class="section-sm">
+  <div class="container" style="max-width:800px;">
+
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:2.5rem;align-items:start;">
+
+      <!-- Form -->
+      <div>
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          <!-- Property details -->
+          <div class="form-section">
+            <div class="form-section-title">About your property</div>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+              <div class="form-field">
+                <label>Building or development name</label>
+                {{ form.property_name }}
+              </div>
+              <div class="form-field">
+                <label>Street address</label>
+                {{ form.property_address }}
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>City</label>
+                  {{ form.city }}
+                </div>
+                <div class="form-field">
+                  <label>Total units / spaces</label>
+                  {{ form.unit_count }}
+                  <span style="font-size:0.75rem;color:var(--text-muted);">Apartments, offices, or commercial units.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact -->
+          <div class="form-section">
+            <div class="form-section-title">Your contact details</div>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+              <div class="form-field">
+                <label>Full name</label>
+                {{ form.contact_name }}
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Phone</label>
+                  {{ form.contact_phone }}
+                </div>
+                <div class="form-field">
+                  <label>Email</label>
+                  {{ form.contact_email }}
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Additional notes (optional)</label>
+                {{ form.notes }}
+              </div>
+            </div>
+          </div>
+
+          {% if form.errors %}
+          <div class="uf-alert uf-alert-error">Please correct the errors above.</div>
+          {% endif %}
+
+          <!-- Consent -->
+          <div style="background:var(--green-50);border:1px solid var(--green-200);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;">
+            <p style="font-size:0.85rem;color:var(--green-700);margin:0;line-height:1.6;">
+              By submitting this form, you agree to be contacted by Ultrafy Fiber Network
+              regarding a potential internet service partnership for your property.
+            </p>
+          </div>
+
+          <div style="display:flex;gap:0.85rem;justify-content:flex-end;">
+            <a href="{% url 'partnership_landing' %}" class="btn-ghost">Back</a>
+            <button type="submit" class="btn-primary btn-lg">Submit application</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Sidebar -->
+      <div>
+        <div style="background:linear-gradient(145deg,#0c422a,#1a5c3a);border-radius:var(--radius-xl);padding:2rem;position:sticky;top:80px;">
+          <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--green-400);margin-bottom:1.25rem;">What happens next</div>
+          <div style="display:flex;flex-direction:column;gap:1.25rem;">
+            <div style="display:flex;gap:0.85rem;align-items:flex-start;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(58,184,130,0.2);border:1.5px solid rgba(58,184,130,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <span style="font-size:0.72rem;font-weight:800;color:var(--green-400);">1</span>
+              </div>
+              <div>
+                <div style="font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:0.2rem;">We review your application</div>
+                <div style="font-size:0.78rem;color:rgba(255,255,255,0.55);line-height:1.5;">Our team checks your building details and location within 2 business days.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.85rem;align-items:flex-start;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(58,184,130,0.2);border:1.5px solid rgba(58,184,130,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <span style="font-size:0.72rem;font-weight:800;color:var(--green-400);">2</span>
+              </div>
+              <div>
+                <div style="font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:0.2rem;">We contact you</div>
+                <div style="font-size:0.78rem;color:rgba(255,255,255,0.55);line-height:1.5;">We'll discuss the partnership details and fiber installation plan.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.85rem;align-items:flex-start;">
+              <div style="width:28px;height:28px;border-radius:50%;background:rgba(58,184,130,0.2);border:1.5px solid rgba(58,184,130,0.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <span style="font-size:0.72rem;font-weight:800;color:var(--green-400);">3</span>
+              </div>
+              <div>
+                <div style="font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:0.2rem;">Your listing goes live</div>
+                <div style="font-size:0.78rem;color:rgba(255,255,255,0.55);line-height:1.5;">We publish your property and start driving qualified tenant leads your way.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

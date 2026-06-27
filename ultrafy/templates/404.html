@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page not found — Ultrafy Fiber</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--surface-soft);padding:2rem;">
+
+  <a href="/" class="uf-logo" style="margin-bottom:3rem;text-decoration:none;">
+    <span class="uf-logo-dot"></span>
+    Ultrafy<span>Fiber</span>
+  </a>
+
+  <div style="text-align:center;max-width:480px;">
+    <div style="font-size:7rem;font-weight:900;color:var(--green-100);line-height:1;margin-bottom:0.5rem;font-family:var(--font-display);">404</div>
+    <h1 style="font-size:1.75rem;font-weight:800;margin-bottom:0.75rem;">Page not found</h1>
+    <p style="color:var(--text-muted);font-size:0.95rem;line-height:1.7;margin-bottom:2rem;">
+      The page you are looking for might have been removed, renamed, or is temporarily unavailable.
+    </p>
+    <div style="display:flex;gap:0.85rem;justify-content:center;flex-wrap:wrap;">
+      <a href="/" class="btn-primary">Go home</a>
+      <a href="/properties/" class="btn-secondary">Browse properties</a>
+    </div>
+  </div>
+
+</body>
+</html>

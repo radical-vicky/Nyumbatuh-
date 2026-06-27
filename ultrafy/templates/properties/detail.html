@@ -1,0 +1,229 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div style="background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 0;">
+  <div class="container">
+    <div style="font-size:0.82rem;color:var(--text-muted);">
+      <a href="{% url 'home' %}" style="color:var(--text-muted);">Home</a>
+      &nbsp;/&nbsp;
+      <a href="{% url 'property_list' %}" style="color:var(--text-muted);">Properties</a>
+      &nbsp;/&nbsp;
+      <span>{{ property.title }}</span>
+    </div>
+  </div>
+</div>
+
+<section class="section-sm">
+  <div class="container">
+
+    <!-- Gallery -->
+    <div class="detail-gallery">
+      <div class="detail-gallery-main">
+        {% with imgs=property.images.all %}
+        {% if imgs %}
+          <img src="{{ imgs.0.image.url }}" alt="{{ property.title }}" id="gallery-main" class="gallery-main-img" style="width:100%;height:100%;object-fit:cover;">
+        {% else %}
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--green-50);color:var(--green-200);">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+          </div>
+        {% endif %}
+        {% endwith %}
+      </div>
+      <div class="detail-gallery-side">
+        {% for img in images|slice:"1:3" %}
+        <div>
+          <img src="{{ img.image.url }}" alt="{{ img.caption|default:property.title }}"
+               class="gallery-thumb" style="width:100%;height:100%;object-fit:cover;cursor:pointer;">
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="detail-grid">
+      <!-- Left: Info -->
+      <div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+          <span class="badge badge-soft">{{ property.get_property_type_display }}</span>
+          <span class="badge {% if property.status == 'available' %}badge-green{% else %}badge-soft{% endif %}">{{ property.get_status_display }}</span>
+          {% if property.ultrafy_partner %}
+          <span class="badge badge-partner">Ultrafy Fiber Partner</span>
+          {% endif %}
+          {% if property.is_for_rent %}<span class="badge badge-soft">For Rent</span>{% endif %}
+          {% if property.is_for_sale %}<span class="badge badge-soft">For Sale</span>{% endif %}
+        </div>
+
+        <h1 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:900;margin-bottom:0.5rem;">{{ property.title }}</h1>
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.5rem;">
+          {{ property.full_address }}
+        </p>
+
+        {% if property.ultrafy_partner %}
+        <div class="partner-indicator">
+          <div class="partner-indicator-dot"></div>
+          <span class="partner-indicator-text">
+            Ultrafy Fiber Internet available
+            {% if property.internet_speed_mbps %}— up to {{ property.internet_speed_mbps }} Mbps{% endif %}
+          </span>
+        </div>
+        {% endif %}
+
+        <!-- Specs -->
+        <div class="detail-specs">
+          {% if property.total_units > 1 %}
+          <div class="spec-card">
+            <div class="spec-label">Available Units</div>
+            <div class="spec-value">{{ property.available_units }} / {{ property.total_units }}</div>
+          </div>
+          {% endif %}
+          {% if property.floor_area_sqm %}
+          <div class="spec-card">
+            <div class="spec-label">Floor Area</div>
+            <div class="spec-value">{{ property.floor_area_sqm }} sqm</div>
+          </div>
+          {% endif %}
+          {% if property.floors %}
+          <div class="spec-card">
+            <div class="spec-label">Floors</div>
+            <div class="spec-value">{{ property.floors }}</div>
+          </div>
+          {% endif %}
+          {% if property.year_built %}
+          <div class="spec-card">
+            <div class="spec-label">Year Built</div>
+            <div class="spec-value">{{ property.year_built }}</div>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">About this property</h2>
+        <p style="font-size:0.95rem;color:var(--text-secondary);line-height:1.8;white-space:pre-line;">{{ property.description }}</p>
+
+        {% if amenities %}
+        <div class="divider"></div>
+        <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">Amenities</h2>
+        <div class="tag-list">
+          {% for amenity in amenities %}
+          <span class="tag">{{ amenity.name }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Image thumbnails -->
+        {% if images|length > 1 %}
+        <div class="divider"></div>
+        <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1rem;">All photos</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:0.5rem;">
+          {% for img in images %}
+          <div style="border-radius:8px;overflow:hidden;aspect-ratio:1;cursor:pointer;" onclick="document.getElementById('gallery-main').src='{{ img.image.url }}'">
+            <img src="{{ img.image.url }}" alt="{{ img.caption|default:'' }}" style="width:100%;height:100%;object-fit:cover;" class="gallery-thumb">
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if user == property.owner %}
+        <div class="divider"></div>
+        <div style="display:flex;gap:0.75rem;">
+          <a href="#" class="btn-secondary btn-sm">Edit listing</a>
+          <form action="{% url 'property_delete' property.slug %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-ghost btn-sm" style="color:#dc2626;" data-confirm="Remove this listing?">Remove listing</button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Right: Inquiry sidebar -->
+      <div>
+        <div class="sidebar-card">
+          <!-- Price -->
+          <div style="margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);">
+            {% if property.price_per_month %}
+            <div style="font-family:var(--font-display);font-size:2rem;font-weight:900;color:var(--text-primary);">
+              ₱{{ property.price_per_month|floatformat:0 }}
+              <span style="font-size:0.9rem;font-weight:500;color:var(--text-muted);">/ month</span>
+            </div>
+            {% endif %}
+            {% if property.price_for_sale %}
+            <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--text-primary);margin-top:0.4rem;">
+              ₱{{ property.price_for_sale|floatformat:0 }}
+              <span style="font-size:0.85rem;font-weight:500;color:var(--text-muted);">for sale</span>
+            </div>
+            {% endif %}
+            {% if not property.price_per_month and not property.price_for_sale %}
+            <div style="font-size:1rem;font-weight:600;color:var(--text-muted);">Price on request</div>
+            {% endif %}
+          </div>
+
+          <!-- Contact info -->
+          {% if property.contact_name or property.contact_phone %}
+          <div style="margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);">
+            <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:0.6rem;">Contact</div>
+            {% if property.contact_name %}
+            <div style="font-weight:600;font-size:0.95rem;">{{ property.contact_name }}</div>
+            {% endif %}
+            {% if property.contact_phone %}
+            <div style="font-size:0.88rem;color:var(--text-secondary);">{{ property.contact_phone }}</div>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <!-- Inquiry Form -->
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:1rem;">Send an inquiry</div>
+
+          <form method="post">
+            {% csrf_token %}
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              {% if user.is_authenticated %}
+              <input type="hidden" name="name" value="{{ user.get_full_name|default:user.email }}">
+              <input type="hidden" name="email" value="{{ user.email }}">
+              {% else %}
+              <div class="form-field">
+                <label style="font-size:0.8rem;font-weight:600;color:var(--text-secondary);">Your name</label>
+                {{ inquiry_form.name }}
+              </div>
+              <div class="form-field">
+                <label style="font-size:0.8rem;font-weight:600;color:var(--text-secondary);">Email</label>
+                {{ inquiry_form.email }}
+              </div>
+              {% endif %}
+              <div class="form-field">
+                <label style="font-size:0.8rem;font-weight:600;color:var(--text-secondary);">Phone (optional)</label>
+                {{ inquiry_form.phone }}
+              </div>
+              <div class="form-field">
+                <label style="font-size:0.8rem;font-weight:600;color:var(--text-secondary);">Message</label>
+                {{ inquiry_form.message }}
+              </div>
+              <button type="submit" class="btn-primary" style="width:100%;justify-content:center;">Send inquiry</button>
+            </div>
+          </form>
+
+          <p style="font-size:0.75rem;color:var(--text-muted);text-align:center;margin-top:0.75rem;">
+            The owner typically responds within 24 hours.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related -->
+    {% if related %}
+    <div style="margin-top:4rem;">
+      <h2 style="font-size:1.25rem;font-weight:800;margin-bottom:1.5rem;">More in {{ property.city }}</h2>
+      <div class="property-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
+        {% for prop in related %}
+        {% include "properties/partials/property_card.html" with property=prop %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

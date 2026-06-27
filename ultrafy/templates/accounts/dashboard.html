@@ -1,0 +1,190 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Dashboard — Ultrafy Fiber{% endblock %}
+
+{% block content %}
+
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div class="section-label">Welcome back</div>
+        <h1 style="font-size:1.75rem;font-weight:900;margin-bottom:0.25rem;">
+          {{ profile.display_name }}
+        </h1>
+        <p style="font-size:0.88rem;color:var(--text-muted);">
+          {{ user.email }} &mdash; {{ profile.get_role_display }}
+          {% if profile.is_partner %}
+            &mdash; <span style="color:var(--green-600);font-weight:600;">Ultrafy Partner</span>
+          {% endif %}
+        </p>
+      </div>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <a href="{% url 'profile_edit' %}" class="btn-secondary btn-sm">Edit profile</a>
+        <a href="{% url 'property_create' %}" class="btn-primary btn-sm">Add listing</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section-sm">
+  <div class="container">
+
+    <!-- Stats Row -->
+    <div class="dashboard-stat-row">
+      <div class="stat-card">
+        <div class="stat-card-num">{{ user.properties.count }}</div>
+        <div class="stat-card-label">My listings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num">
+          {% with total=0 %}
+            {% for p in user.properties.all %}
+              {% if forloop.first %}{{ user.properties.all|length }}{% endif %}
+            {% endfor %}
+            0
+          {% endwith %}
+        </div>
+        <div class="stat-card-label">Total inquiries</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-num">{{ user.partnership_requests.count }}</div>
+        <div class="stat-card-label">Partnership applications</div>
+      </div>
+      <div class="stat-card" style="background:var(--green-50);border-color:var(--green-200);">
+        <div class="stat-card-num" style="color:var(--green-600);">
+          {% if profile.is_partner %}Active{% else %}None{% endif %}
+        </div>
+        <div class="stat-card-label">Partner status</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:2rem;align-items:start;">
+
+      <!-- Left: My Properties -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+          <h2 style="font-size:1.1rem;font-weight:800;">My listings</h2>
+          <a href="{% url 'my_properties' %}" style="font-size:0.85rem;color:var(--green-600);font-weight:600;">View all</a>
+        </div>
+
+        {% with props=user.properties.all %}
+        {% if props %}
+          <div style="display:flex;flex-direction:column;gap:0.85rem;">
+            {% for prop in props|slice:":5" %}
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;">
+              <div style="width:56px;height:44px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--surface-muted);">
+                {% with img=prop.get_primary_image %}
+                {% if img %}
+                  <img src="{{ img.image.url }}" alt="{{ prop.title }}" style="width:100%;height:100%;object-fit:cover;">
+                {% else %}
+                  <div style="width:100%;height:100%;background:var(--green-50);"></div>
+                {% endif %}
+                {% endwith %}
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:700;font-size:0.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  <a href="{% url 'property_detail' prop.slug %}" style="color:var(--text-primary);">{{ prop.title }}</a>
+                </div>
+                <div style="font-size:0.78rem;color:var(--text-muted);">{{ prop.city }} &mdash; {{ prop.get_property_type_display }}</div>
+              </div>
+              <div style="flex-shrink:0;text-align:right;">
+                <span class="badge {% if prop.status == 'available' %}badge-green{% else %}badge-soft{% endif %}" style="font-size:0.68rem;">
+                  {{ prop.get_status_display }}
+                </span>
+                <div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.3rem;">{{ prop.views_count }} views</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div style="background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius-lg);padding:3rem;text-align:center;">
+            <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1rem;">You haven't listed any properties yet.</p>
+            <a href="{% url 'property_create' %}" class="btn-primary btn-sm">Add your first listing</a>
+          </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Partnership Applications -->
+        {% with apps=user.partnership_requests.all %}
+        {% if apps %}
+        <div style="margin-top:2.5rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+            <h2 style="font-size:1.1rem;font-weight:800;">Partnership applications</h2>
+            <a href="{% url 'partnership_status' %}" style="font-size:0.85rem;color:var(--green-600);font-weight:600;">View all</a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.75rem;">
+            {% for app in apps|slice:":3" %}
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+              <div>
+                <div style="font-weight:700;font-size:0.9rem;">{{ app.property_name }}</div>
+                <div style="font-size:0.78rem;color:var(--text-muted);">{{ app.city }} &mdash; {{ app.unit_count }} units &mdash; {{ app.created_at|date:"M d, Y" }}</div>
+              </div>
+              <span class="badge status-{{ app.status }}" style="font-size:0.7rem;white-space:nowrap;">{{ app.get_status_display }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+      </div>
+
+      <!-- Right: Sidebar -->
+      <div>
+        <!-- Profile Card -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.25rem;">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:1rem;">Profile</div>
+          <div style="display:flex;flex-direction:column;gap:0.65rem;">
+            <div style="display:flex;justify-content:space-between;font-size:0.88rem;">
+              <span style="color:var(--text-muted);">Role</span>
+              <span style="font-weight:600;">{{ profile.get_role_display }}</span>
+            </div>
+            {% if profile.phone %}
+            <div style="display:flex;justify-content:space-between;font-size:0.88rem;">
+              <span style="color:var(--text-muted);">Phone</span>
+              <span style="font-weight:600;">{{ profile.phone }}</span>
+            </div>
+            {% endif %}
+            {% if profile.company_name %}
+            <div style="display:flex;justify-content:space-between;font-size:0.88rem;">
+              <span style="color:var(--text-muted);">Company</span>
+              <span style="font-weight:600;">{{ profile.company_name }}</span>
+            </div>
+            {% endif %}
+            <div style="display:flex;justify-content:space-between;font-size:0.88rem;">
+              <span style="color:var(--text-muted);">Member since</span>
+              <span style="font-weight:600;">{{ profile.created_at|date:"M Y" }}</span>
+            </div>
+          </div>
+          <a href="{% url 'profile_edit' %}" class="btn-secondary btn-sm" style="width:100%;justify-content:center;margin-top:1.25rem;">Edit profile</a>
+        </div>
+
+        <!-- Quick Actions -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.25rem;">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:1rem;">Quick actions</div>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <a href="{% url 'property_create' %}" class="btn-secondary btn-sm" style="width:100%;justify-content:center;">List a property</a>
+            <a href="{% url 'property_list' %}" class="btn-ghost btn-sm" style="width:100%;justify-content:center;">Browse properties</a>
+            <a href="{% url 'partnership_apply' %}" class="btn-ghost btn-sm" style="width:100%;justify-content:center;">Apply for partnership</a>
+          </div>
+        </div>
+
+        {% if not profile.is_partner %}
+        <!-- Partner CTA -->
+        <div style="background:linear-gradient(145deg,#0c422a,#1a5c3a);border-radius:var(--radius-lg);padding:1.5rem;">
+          <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--green-400);margin-bottom:0.75rem;">Partnership</div>
+          <p style="font-size:0.88rem;color:rgba(255,255,255,0.72);line-height:1.6;margin-bottom:1rem;">
+            Own or manage a building? List it free and become an Ultrafy Fiber partner.
+          </p>
+          <a href="{% url 'partnership_landing' %}" class="btn-primary btn-sm" style="width:100%;justify-content:center;">Learn more</a>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

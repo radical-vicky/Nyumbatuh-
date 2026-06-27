@@ -1,0 +1,37 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block head_title %}Confirm email{% endblock %}
+
+{% block content %}
+
+<div style="text-align:center;">
+  <div style="width:72px;height:72px;background:var(--green-50);border:1.5px solid var(--green-200);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--green-500)" stroke-width="1.5">
+      <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/>
+    </svg>
+  </div>
+
+  {% if confirmation %}
+  <h2 class="auth-form-title">Confirm your email</h2>
+  <p style="font-size:0.9rem;color:var(--text-muted);line-height:1.7;margin-bottom:2rem;">
+    Please confirm that <strong>{{ confirmation.email_address.email }}</strong> is your email address.
+  </p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:0.8rem;">
+      Confirm email address
+    </button>
+  </form>
+  {% else %}
+  <h2 class="auth-form-title">Invalid link</h2>
+  <p style="font-size:0.9rem;color:var(--text-muted);line-height:1.7;margin-bottom:2rem;">
+    This confirmation link is invalid or has expired. Please request a new one.
+  </p>
+  <a href="{% url 'account_login' %}" class="btn-secondary" style="width:100%;justify-content:center;display:flex;">
+    Back to sign in
+  </a>
+  {% endif %}
+</div>
+
+{% endblock %}

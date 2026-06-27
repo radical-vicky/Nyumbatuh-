@@ -1,0 +1,214 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- ── Hero ─────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow fade-up fade-up-1" data-fade>
+          <span class="uf-logo-dot"></span>
+          Free property marketing + fiber internet
+        </div>
+        <h1 class="hero-title fade-up fade-up-1" data-fade>
+          Your building,<br>
+          <span class="accent">fully connected.</span>
+        </h1>
+        <p class="hero-body fade-up fade-up-2" data-fade>
+          We list your apartments, offices, and commercial spaces for free —
+          reaching the right tenants faster. In return, we become the official
+          fiber internet provider for your building.
+        </p>
+        <div class="hero-actions fade-up fade-up-2" data-fade>
+          <a href="{% url 'property_list' %}" class="btn-primary btn-lg">Browse properties</a>
+          <a href="{% url 'partnership_landing' %}" class="btn-secondary btn-lg">Partner with us</a>
+        </div>
+        <div class="hero-stats fade-up fade-up-3" data-fade>
+          <div>
+            <div class="hero-stat-num">{{ total_properties }}+</div>
+            <div class="hero-stat-label">Properties listed</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">{{ partner_count }}</div>
+            <div class="hero-stat-label">Ultrafy partners</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">1 Gbps</div>
+            <div class="hero-stat-label">Max fiber speed</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual" data-fade>
+        <div class="hero-img-wrap">
+          <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80"
+               alt="Modern building with fiber connectivity"
+               loading="lazy">
+        </div>
+        <div class="hero-badge">
+          <div class="hero-badge-label">Fiber speed</div>
+          <div class="hero-badge-value">Up to 1 Gbps</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Quick Search ──────────────────────────────────────────── -->
+<section class="section-sm" style="background:var(--surface);">
+  <div class="container">
+    <form action="{% url 'property_list' %}" method="get">
+      <div class="search-bar">
+        <input type="text" name="q" placeholder="Search by city, building name, or address..."
+               value="{{ request.GET.q }}" autocomplete="off">
+        <div class="search-divider"></div>
+        <select name="type">
+          <option value="">All types</option>
+          <option value="apartment">Apartment</option>
+          <option value="office">Office</option>
+          <option value="commercial">Commercial</option>
+          <option value="condo">Condo</option>
+          <option value="building">Entire Building</option>
+        </select>
+        <div class="search-divider"></div>
+        <select name="listing">
+          <option value="">Rent or Buy</option>
+          <option value="rent">For Rent</option>
+          <option value="sale">For Sale</option>
+        </select>
+        <button type="submit" class="btn-primary" style="flex-shrink:0;">Search</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ── Featured Properties ────────────────────────────────────── -->
+{% if featured %}
+<section class="section" style="background:var(--surface-soft);">
+  <div class="container">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.5rem;">
+      <div>
+        <div class="section-label">Highlighted spaces</div>
+        <h2 class="section-title">Featured properties</h2>
+      </div>
+      <a href="{% url 'property_list' %}" class="btn-secondary" style="flex-shrink:0;">View all</a>
+    </div>
+    <div class="property-grid">
+      {% for prop in featured %}
+      {% include "properties/partials/property_card.html" with property=prop %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── How it works ───────────────────────────────────────────── -->
+<section class="section" style="background:var(--surface);">
+  <div class="container">
+    <div style="text-align:center;max-width:600px;margin:0 auto 4rem;">
+      <div class="section-label">The deal</div>
+      <h2 class="section-title">A partnership that works both ways</h2>
+      <p class="section-body" style="margin:0 auto;">
+        Ultrafy solves two problems at once — property owners fill their buildings faster,
+        and we get to provide fiber internet to everyone inside.
+      </p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;">
+      <div class="glass-card" style="padding:2rem;" data-fade>
+        <div style="width:48px;height:48px;border-radius:12px;background:var(--green-50);border:1px solid var(--green-200);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
+          <div style="width:20px;height:20px;border-radius:50%;background:var(--green-400);"></div>
+        </div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.6rem;">Free property listing</h3>
+        <p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.7;">
+          We market your apartments, offices, and commercial units to thousands
+          of people actively searching for spaces in your area.
+        </p>
+      </div>
+      <div class="glass-card" style="padding:2rem;" data-fade>
+        <div style="width:48px;height:48px;border-radius:12px;background:var(--green-50);border:1px solid var(--green-200);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
+          <div style="width:20px;height:3px;background:var(--green-400);border-radius:2px;"></div>
+        </div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.6rem;">Faster occupancy</h3>
+        <p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.7;">
+          Tenants and businesses find your property sooner. Your units fill up
+          faster, reducing vacancy periods and improving your returns.
+        </p>
+      </div>
+      <div class="glass-card" style="padding:2rem;" data-fade>
+        <div style="width:48px;height:48px;border-radius:12px;background:var(--green-50);border:1px solid var(--green-200);display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
+          <div style="width:14px;height:14px;background:transparent;border:3px solid var(--green-400);border-radius:50%;"></div>
+        </div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.6rem;">Official fiber ISP</h3>
+        <p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.7;">
+          In exchange, Ultrafy becomes the designated internet service provider
+          for your building — offering tenants reliable gigabit fiber.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Recent Listings ─────────────────────────────────────────── -->
+{% if recent %}
+<section class="section" style="background:var(--surface-soft);">
+  <div class="container">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.5rem;">
+      <div>
+        <div class="section-label">Just added</div>
+        <h2 class="section-title">Recent listings</h2>
+      </div>
+      <a href="{% url 'property_list' %}" class="btn-secondary" style="flex-shrink:0;">View all</a>
+    </div>
+    <div class="property-grid">
+      {% for prop in recent %}
+      {% include "properties/partials/property_card.html" with property=prop %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── CTA Banner ──────────────────────────────────────────────── -->
+<section class="partner-hero">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="partner-grid">
+      <div>
+        <div class="section-label" style="color:var(--green-400);">Property owners &amp; developers</div>
+        <h2 class="section-title" style="color:#fff;font-size:clamp(2rem,4vw,3rem);">
+          Your building deserves<br>better visibility.
+        </h2>
+        <p style="color:rgba(255,255,255,0.65);font-size:1.05rem;line-height:1.7;margin:1.25rem 0 2rem;max-width:480px;">
+          List your property for free and let us handle the marketing. We bring
+          the tenants — you give us the chance to keep them connected.
+        </p>
+        <a href="{% url 'partnership_landing' %}" class="btn-primary btn-lg">Learn about partnership</a>
+      </div>
+      <div class="partner-benefit-list">
+        <div class="partner-benefit">
+          <div class="partner-benefit-dot"><div class="partner-benefit-dot-inner"></div></div>
+          <div>
+            <div class="partner-benefit-title">Zero marketing cost</div>
+            <div class="partner-benefit-body">We handle photography, descriptions, and promotion. No fees, no contracts on your end.</div>
+          </div>
+        </div>
+        <div class="partner-benefit">
+          <div class="partner-benefit-dot"><div class="partner-benefit-dot-inner"></div></div>
+          <div>
+            <div class="partner-benefit-title">Qualified leads</div>
+            <div class="partner-benefit-body">Inquiries come from people actively looking for space — not cold traffic.</div>
+          </div>
+        </div>
+        <div class="partner-benefit">
+          <div class="partner-benefit-dot"><div class="partner-benefit-dot-inner"></div></div>
+          <div>
+            <div class="partner-benefit-title">Fiber as a selling point</div>
+            <div class="partner-benefit-body">High-speed internet in your building makes it more attractive to modern tenants and businesses.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
